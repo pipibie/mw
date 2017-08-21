@@ -1,0 +1,59 @@
+QWidget {
+    font-size: 14px;
+}
+
+QWidget#mainWidget {
+    background-color: white;
+}
+
+QWidget#settingWidget {
+    background-color: #ddd;
+}
+
+QPushButton {
+    color: white;
+    border-radius: 5;
+    background-color: #7bd07f;
+}
+
+QPushButton:pressed {
+    background-color: #72c276;
+}
+
+QPushButton#gameStartButton {
+    font-size: 18px;
+}
+
+QRadioButton::unchecked, QCheckBox::unchecked {
+    color: #a0a0a0;
+}
+
+QRadioButton::checked, QCheckBox::checked {
+    color: #7bd07f;
+}
+
+QRadioButton::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+QRadioButton::indicator::unchecked {
+    image: url(:/res/unselected.png);
+}
+
+QRadioButton::indicator::checked {
+    image: url(:/res/selected.png);
+}
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+QCheckBox::indicator::unchecked {
+    image: url(:/res/unchecked.png);
+}
+
+QCheckBox::indicator::checked {
+    image: url(:/res/checked.png);
+}

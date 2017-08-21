@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/btn-close.png</file>
+        <file>res/btn-setting.png</file>
+        <file>res/checked.png</file>
+        <file>res/logo.png</file>
+        <file>res/selected.png</file>
+        <file>res/unchecked.png</file>
+        <file>res/unselected.png</file>
+        <file>qss/default.qss</file>
+    </qresource>
+</RCC>

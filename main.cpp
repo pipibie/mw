@@ -1,5 +1,9 @@
 #include "minecraftwrapper.hpp"
 #include <QApplication>
+#include <QDebug>
+
+#include "mcconfig.hpp"
+#include "modswitch.hpp"
 
 int main(int argc, char *argv[])
 {

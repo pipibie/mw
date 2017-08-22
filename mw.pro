@@ -24,9 +24,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        minecraftwrapper.cpp
+        minecraftwrapper.cpp \
+    modswitch.cpp
 
-HEADERS  += minecraftwrapper.hpp
+HEADERS  += minecraftwrapper.hpp \
+    mcconfig.hpp \
+    modswitch.hpp
 
 FORMS    += minecraftwrapper.ui
 

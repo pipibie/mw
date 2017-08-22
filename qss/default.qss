@@ -7,7 +7,7 @@ QWidget#mainWidget {
 }
 
 QWidget#settingWidget {
-    background-color: #ddd;
+    background-color: #edf1f4;
 }
 
 QPushButton {

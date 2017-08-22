@@ -47,6 +47,7 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
         { "FPS加速", MCConfig::base_dir.filePath(".minecraft/mods/[加速]BetterFps-1.3.2.jar") },
         { "加速", MCConfig::base_dir.filePath(".minecraft/mods/fastcraft-1.25.jar") } // 不太对
     };
+
     for (auto pair : mods) {
         QCheckBox *checkbox = new QCheckBox(pair.first, this);
         ui->toggleContainer->addWidget(checkbox);

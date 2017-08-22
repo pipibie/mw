@@ -96,7 +96,7 @@
       <string>启动游戏</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="usernameEdit">
+    <widget class="QLineEdit" name="usernameEdit">
      <property name="geometry">
       <rect>
        <x>35</x>
@@ -107,6 +107,12 @@
      </property>
      <property name="styleSheet">
       <string notr="true">font-size: 18px;</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhNone</set>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="placeholderText">
       <string>输入用户名</string>
@@ -139,7 +145,7 @@
        <height>301</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
       <property name="spacing">
        <number>22</number>
       </property>
@@ -178,6 +184,19 @@
          </property>
          <property name="text">
           <string>Java</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>30</y>
+           <width>113</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>56758745</string>
          </property>
         </widget>
        </widget>

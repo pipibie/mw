@@ -57,3 +57,23 @@ QCheckBox::indicator::unchecked {
 QCheckBox::indicator::checked {
     image: url(:/res/checked.png);
 }
+
+QLineEdit {
+    border: 2px solid #dadada;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    background-color: transparent;
+}
+
+QLineEdit:active {
+    color: #666666
+}
+
+QLineEdit[text=""] {
+    border: 2px solid #666666;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+}
+

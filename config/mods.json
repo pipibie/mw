@@ -1,0 +1,7 @@
+[
+    { "name": "自定义史蒂夫", "path": ".minecraft/mods/[自定义史蒂夫]CustomSteve1710-Beta.jar" },
+    { "name": "光影", "path": ".minecraft/mods/[光影]GLSL-Shaders-Mod-1.7.10.jar" },
+    { "name": "内存清理", "path": ".minecraft/mods/[内存清理]Memory Cleaner Mod 1.7.10.jar" },
+    { "name": "FPS加速", "path": ".minecraft/mods/[加速]BetterFps-1.3.2.jar" },
+    { "name": "加速", "path": ".minecraft/mods/fastcraft-1.25.jar" }
+]

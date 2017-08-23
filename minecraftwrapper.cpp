@@ -4,6 +4,10 @@
 #include <qevent.h>
 #include <QSharedPointer>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
 
 #include <functional>
 
@@ -42,26 +46,29 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
         ui->useJourneyRadioButton->setChecked(false);
     }
 
-    QList< QPair<QString, QString> > mods = {
-        { "自定义史蒂夫", MCConfig::base_dir.filePath(".minecraft/mods/[自定义史蒂夫]CustomSteve1710-Beta.jar") },
-        { "光影", MCConfig::base_dir.filePath(".minecraft/mods/[光影]GLSL-Shaders-Mod-1.7.10.jar") },
-        { "内存清理", MCConfig::base_dir.filePath(".minecraft/mods/[内存清理]Memory Cleaner Mod 1.7.10.jar") },
-        { "FPS", MCConfig::base_dir.filePath(".minecraft/mods/[加速]BetterFps-1.3.2.jar") },
-        { "", MCConfig::base_dir.filePath(".minecraft/mods/fastcraft-1.25.jar") } // 不太对
-    };
+    QJsonParseError error;
+    QFile modFile(":/config/mods.json");
+    modFile.open(QFile::ReadOnly);
+    QJsonDocument document = QJsonDocument::fromJson(modFile.readAll(), &error);
+    if (!document.isNull() && document.isArray()) {
+        for (auto mod : document.array()) {
+            if (mod.isObject()) {
+                auto modObj = mod.toObject();
+                if (modObj.contains("name") && modObj.contains("path")) {
+                    QCheckBox *checkbox = new QCheckBox(modObj["name"].toString(), this);
+                    ui->toggleContainer->addWidget(checkbox);
+                    auto switcher = QSharedPointer<ModSwitch>(new ModSwitch(modObj["path"].toString()));
 
-    for (auto pair : mods) {
-        QCheckBox *checkbox = new QCheckBox(pair.first, this);
-        ui->toggleContainer->addWidget(checkbox);
-        auto switcher = QSharedPointer<ModSwitch>(new ModSwitch(pair.second));
+                    checkbox->setChecked(switcher->enabled());
 
-        checkbox->setChecked(switcher->enabled());
-
-        connect(checkbox, &QCheckBox::clicked, [switcher](bool value) {
-            if (switcher->enabled() != value) {
-                switcher->toggle();
+                    connect(checkbox, &QCheckBox::clicked, [switcher](bool value) {
+                        if (switcher->enabled() != value) {
+                            switcher->toggle();
+                        }
+                    });
+                }
             }
-        });
+        }
     }
 
     connect(ui->settingButton, SIGNAL(clicked(bool)), this, SLOT(toggleSettingPanel()));

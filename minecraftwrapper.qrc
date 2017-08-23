@@ -8,5 +8,6 @@
         <file>res/unchecked.png</file>
         <file>res/unselected.png</file>
         <file>qss/default.qss</file>
+        <file>config/mods.json</file>
     </qresource>
 </RCC>

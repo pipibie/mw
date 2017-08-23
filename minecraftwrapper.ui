@@ -93,7 +93,7 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>启动游戏</string>
+      <string>startGame</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="usernameEdit">
@@ -115,7 +115,7 @@
       <set>Qt::AlignCenter</set>
      </property>
      <property name="placeholderText">
-      <string>输入用户名</string>
+      <string>inputUsername</string>
      </property>
     </widget>
     <zorder>settingButton</zorder>
@@ -228,7 +228,7 @@
         <item>
          <widget class="QRadioButton" name="useJourneyRadioButton">
           <property name="text">
-           <string>使用旅行者地图</string>
+           <string>useJourneyMap</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -238,7 +238,7 @@
         <item>
          <widget class="QRadioButton" name="useXaerosRadioButton">
           <property name="text">
-           <string>使用Xaeros地图</string>
+           <string>userXaerosMap</string>
           </property>
          </widget>
         </item>

@@ -10,5 +10,6 @@
         <file>qss/default.qss</file>
         <file>config/mods.json</file>
         <file>translations/mw_zh.qm</file>
+        <file>config/command.txt</file>
     </qresource>
 </RCC>

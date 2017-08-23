@@ -9,16 +9,18 @@
 #include <QJsonValue>
 #include <QJsonObject>
 
-#include <functional>
+#include <QProcess>
 
 #include "mcconfig.hpp"
 #include "modswitch.hpp"
+#include "envjavalocator.hpp"
 
 MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MinecraftWrapper),
     journey_map_switch(MCConfig::base_dir.filePath(".minecraft/mods/journeymap-1.7.10-5.1.4p1[旅行者地图].jar")),
-    xaeros_map_switch(MCConfig::base_dir.filePath(".minecraft/mods/Xaeros_Minimap_1.12_Forge_1.7.10[地图].jar"))
+    xaeros_map_switch(MCConfig::base_dir.filePath(".minecraft/mods/Xaeros_Minimap_1.12_Forge_1.7.10[地图].jar")),
+    settings("Moem", "Minecraft Wrapper")
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
@@ -73,6 +75,7 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
 
     connect(ui->settingButton, SIGNAL(clicked(bool)), this, SLOT(toggleSettingPanel()));
     connect(ui->useXaerosRadioButton, SIGNAL(toggled(bool)), this, SLOT(toggleXaerosMap(bool)));
+    connect(ui->gameStartButton, SIGNAL(clicked(bool)), this, SLOT(startGame()));
     //ui->usernameEdit->setProperty("hasText", true);
 
     for (auto edit : {ui->usernameEdit, ui->javaEdit, ui->memoryEdit}) {
@@ -82,7 +85,7 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
         });
     }
 
-
+    loadSettings();
 }
 
 MinecraftWrapper::~MinecraftWrapper()
@@ -122,4 +125,56 @@ void MinecraftWrapper::toggleSettingPanel()
     } else {
         ui->settingWidget->hide();
     }
+}
+
+void MinecraftWrapper::startGame()
+{
+    QFile commandFile(":/config/command.txt");
+    commandFile.open(QFile::ReadOnly);
+    QString command = QString::fromUtf8(commandFile.readAll());
+    QStringList arguments;
+    for (auto argument : command.split(" ")) {
+        argument.replace("PATH_PREFIX", MCConfig::base_dir.absolutePath());
+        argument.replace("USERNAME", ui->usernameEdit->text());
+        argument.replace("\\", "/");
+        arguments << argument;
+    }
+    QProcess *process = new QProcess();
+    qDebug() << "parameters: " << arguments;
+    process->start(ui->javaEdit->text(), arguments);
+    process->waitForReadyRead();
+    qDebug() << process->readAllStandardError();
+}
+
+void MinecraftWrapper::loadSettings()
+{
+    ui->usernameEdit->setText(settings.value("mc/username", "").toString());
+    ui->memoryEdit->setText(QString::asprintf("%dMB", settings.value("mc/memory", 2048).toInt()));
+    auto javaPath = settings.value("mc/javaPath", "").toString();
+    if (!(QFile{javaPath}).exists()) {
+        // find java
+        EnvironmentVariableJavaLocator locator;
+        locator.load();
+        if (locator.begin() != locator.end()) javaPath = *locator.begin();
+        for (auto path : locator) {
+            if (path.contains("1.8")) {
+                javaPath = path;
+                break;
+            }
+        }
+    }
+    ui->javaEdit->setText(javaPath);
+}
+
+void MinecraftWrapper::saveSettings()
+{
+    settings.setValue("mc/username", ui->usernameEdit->text());
+    settings.setValue("mc/memory", ui->memoryEdit->text().toInt());
+    settings.setValue("mc/javaPath", ui->javaEdit->text());
+    settings.sync();
+}
+
+void MinecraftWrapper::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
 }

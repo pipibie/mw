@@ -25,15 +25,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         minecraftwrapper.cpp \
-    modswitch.cpp
+    modswitch.cpp \
+    javalocator.cpp \
+    envjavalocator.cpp
 
 HEADERS  += minecraftwrapper.hpp \
     mcconfig.hpp \
-    modswitch.hpp
+    modswitch.hpp \
+    javalocator.hpp \
+    envjavalocator.hpp
 
 FORMS    += minecraftwrapper.ui
 
 RESOURCES += \
     minecraftwrapper.qrc
 
-DISTFILES +=
+DISTFILES += \
+    config/command.txt

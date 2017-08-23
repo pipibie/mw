@@ -2,18 +2,18 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QSettings>
 
-#include "mcconfig.hpp"
-#include "modswitch.hpp"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
     // load translation file
     QTranslator mwTranslator;
     mwTranslator.load(":/translations/mw_zh");
     app.installTranslator(&mwTranslator);
-
 
     MinecraftWrapper w;
     w.show();

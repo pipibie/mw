@@ -5,6 +5,7 @@
 #include <QList>
 #include <QPair>
 #include <QCheckBox>
+#include <QSettings>
 
 #include "modswitch.hpp"
 
@@ -26,12 +27,21 @@ public:
 public slots:
     void toggleXaerosMap(bool checked);
     void toggleSettingPanel();
+    void startGame();
+private:
+    void loadSettings();
+    void saveSettings();
 private:
     Ui::MinecraftWrapper *ui;
     QPoint dragPosition;
-
+    QSettings settings;
 protected:
-    ModSwitch journey_map_switch, xaeros_map_switch;
+    ModSwitch journey_map_switch;
+    ModSwitch xaeros_map_switch;
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MINECRAFTWRAPPER_HPP

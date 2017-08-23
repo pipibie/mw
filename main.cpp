@@ -3,6 +3,8 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
+#include <QDebug>
+
 #include "mcconfig.hpp"
 #include "modswitch.hpp"
 
@@ -15,7 +17,7 @@ int main(int argc, char *argv[])
     app.installTranslator(&qtTranslator);
 
     QTranslator mwTranslator;
-    mwTranslator.load("mw_" + QLocale::system().name());
+    qDebug() << mwTranslator.load(":/translations/mw_zh");
     app.installTranslator(&mwTranslator);
 
 

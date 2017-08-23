@@ -9,5 +9,6 @@
         <file>res/unselected.png</file>
         <file>qss/default.qss</file>
         <file>config/mods.json</file>
+        <file>translations/mw_zh.qm</file>
     </qresource>
 </RCC>

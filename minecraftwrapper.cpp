@@ -26,6 +26,8 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
 
     ui->setupUi(this);
 
+    // ui->usernameEdit->setProperty("hasText", true);
+
     ui->settingWidget->hide();
 
     if (xaeros_map_switch.enabled() == journey_map_switch.enabled()) {
@@ -44,8 +46,8 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
         { "自定义史蒂夫", MCConfig::base_dir.filePath(".minecraft/mods/[自定义史蒂夫]CustomSteve1710-Beta.jar") },
         { "光影", MCConfig::base_dir.filePath(".minecraft/mods/[光影]GLSL-Shaders-Mod-1.7.10.jar") },
         { "内存清理", MCConfig::base_dir.filePath(".minecraft/mods/[内存清理]Memory Cleaner Mod 1.7.10.jar") },
-        { "FPS加速", MCConfig::base_dir.filePath(".minecraft/mods/[加速]BetterFps-1.3.2.jar") },
-        { "加速", MCConfig::base_dir.filePath(".minecraft/mods/fastcraft-1.25.jar") } // 不太对
+        { "FPS", MCConfig::base_dir.filePath(".minecraft/mods/[加速]BetterFps-1.3.2.jar") },
+        { "", MCConfig::base_dir.filePath(".minecraft/mods/fastcraft-1.25.jar") } // 不太对
     };
 
     for (auto pair : mods) {
@@ -64,6 +66,16 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
 
     connect(ui->settingButton, SIGNAL(clicked(bool)), this, SLOT(toggleSettingPanel()));
     connect(ui->useXaerosRadioButton, SIGNAL(toggled(bool)), this, SLOT(toggleXaerosMap(bool)));
+    //ui->usernameEdit->setProperty("hasText", true);
+
+    for (auto edit : {ui->usernameEdit, ui->javaEdit, ui->memoryEdit}) {
+        edit->setStyleSheet(edit->text().length() > 0 ? "color: #666666; border: 2px solid #666666; border-top: none; border-right: none; border-left: none; " : "");
+        connect(edit, &QLineEdit::textEdited, [edit](const QString & text) {
+            edit->setStyleSheet(text.length() > 0 ? "color: #666666; border: 2px solid #666666; border-top: none; border-right: none; border-left: none; " : "");
+        });
+    }
+
+
 }
 
 MinecraftWrapper::~MinecraftWrapper()
@@ -89,6 +101,7 @@ void MinecraftWrapper::mouseMoveEvent(QMouseEvent *event)
 
 void MinecraftWrapper::toggleXaerosMap(bool checked)
 {
+    ui->retranslateUi(this);
     if (xaeros_map_switch.enabled() != checked) {
         journey_map_switch.toggle();
         xaeros_map_switch.toggle();

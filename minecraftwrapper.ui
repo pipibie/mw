@@ -106,7 +106,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font-size: 18px;</string>
+      <string notr="true"/>
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
@@ -170,7 +170,7 @@
           </rect>
          </property>
          <property name="text">
-          <string>Memory</string>
+          <string>memory</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_2">
@@ -186,17 +186,36 @@
           <string>Java</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit">
+        <widget class="QLineEdit" name="memoryEdit">
          <property name="geometry">
           <rect>
            <x>50</x>
            <y>30</y>
-           <width>113</width>
-           <height>20</height>
+           <width>110</width>
+           <height>16</height>
           </rect>
          </property>
          <property name="text">
-          <string>56758745</string>
+          <string/>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="javaEdit">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>56</y>
+           <width>110</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
          </property>
         </widget>
        </widget>

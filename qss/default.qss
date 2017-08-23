@@ -66,14 +66,22 @@ QLineEdit {
     background-color: transparent;
 }
 
-QLineEdit:active {
-    color: #666666
-}
-
-QLineEdit[text=""] {
+QLineEdit[hasText="true"] {
+    color: #666666;
     border: 2px solid #666666;
     border-top: none;
     border-right: none;
     border-left: none;
 }
 
+QLineEdit:focus {
+    color: #666666;
+    border: 2px solid #666666;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+}
+
+QLineEdit#usernameEdit {
+    font-size: 18px;
+}

@@ -4,8 +4,6 @@
 #include <QLibraryInfo>
 #include <QSettings>
 
-#include <QDebug>
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

@@ -6,11 +6,11 @@
 
 
 namespace MCConfig {
-//#ifndef MC_BASE_DIR
-//    const QDir base_dir("./");
-//#else
+#ifdef QT_NO_DEBUG
+    const QDir base_dir("./");
+#else
     const QDir base_dir("../mc/");
-//#endif
+#endif
 }
 
 

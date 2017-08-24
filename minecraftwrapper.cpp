@@ -15,6 +15,24 @@
 #include "modswitch.hpp"
 #include "envjavalocator.hpp"
 
+static unsigned long long parseMemory(const QString &memory)
+{
+    static QRegExp regex("(\\d+)(.\\d+)?\\b*([kKMmGg]?)([Bb]?)");
+    double size = 0;
+    if (regex.exactMatch(memory.trimmed())) {
+        auto groups = regex.capturedTexts();
+        size = (groups[1] + groups[2]).toDouble();
+        if (groups[3] == "") {
+            size /= 1024 * 1024;
+        } else if (groups[3] == "k" || groups[3] == "K") {
+            size /= 1024;
+        } else if (groups[3] == "G" || groups[3] == "g") {
+            size *= 1024;
+        }
+    }
+    return static_cast<unsigned long long>(size);
+}
+
 MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MinecraftWrapper),
@@ -59,11 +77,12 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
                 if (modObj.contains("name") && modObj.contains("path")) {
                     QCheckBox *checkbox = new QCheckBox(modObj["name"].toString(), this);
                     ui->toggleContainer->addWidget(checkbox);
-                    auto switcher = QSharedPointer<ModSwitch>(new ModSwitch(modObj["path"].toString()));
+                    auto switcher = QSharedPointer<ModSwitch>(new ModSwitch(MCConfig::base_dir.filePath(modObj["path"].toString())));
 
                     checkbox->setChecked(switcher->enabled());
 
                     connect(checkbox, &QCheckBox::clicked, [switcher](bool value) {
+                        qDebug() << switcher->enabled();
                         if (switcher->enabled() != value) {
                             switcher->toggle();
                         }
@@ -111,7 +130,6 @@ void MinecraftWrapper::mouseMoveEvent(QMouseEvent *event)
 
 void MinecraftWrapper::toggleXaerosMap(bool checked)
 {
-    ui->retranslateUi(this);
     if (xaeros_map_switch.enabled() != checked) {
         journey_map_switch.toggle();
         xaeros_map_switch.toggle();
@@ -129,27 +147,34 @@ void MinecraftWrapper::toggleSettingPanel()
 
 void MinecraftWrapper::startGame()
 {
+    unsigned long long memory = parseMemory(ui->memoryEdit->text());
+    qDebug() << memory;
     QFile commandFile(":/config/command.txt");
     commandFile.open(QFile::ReadOnly);
-    QString command = QString::fromUtf8(commandFile.readAll());
+    QString command = QString::fromUtf8(commandFile.readAll()).replace("\n", "").replace("\r", "");
     QStringList arguments;
     for (auto argument : command.split(" ")) {
+        argument.replace("2048m", QString::asprintf("%dm", memory > 2048 ? memory : 2048));
         argument.replace("PATH_PREFIX", MCConfig::base_dir.absolutePath());
         argument.replace("USERNAME", ui->usernameEdit->text());
-        argument.replace("\\", "/");
         arguments << argument;
     }
     QProcess *process = new QProcess();
-    qDebug() << "parameters: " << arguments;
     process->start(ui->javaEdit->text(), arguments);
     process->waitForReadyRead();
-    qDebug() << process->readAllStandardError();
+    auto output = process->readAllStandardOutput();
+    auto error = process->readAllStandardError();
+    // TODO: display error message
+    if (error.size() == 0 && !output.contains("Crash")) {
+        saveSettings();
+        close();
+    }
 }
 
 void MinecraftWrapper::loadSettings()
 {
     ui->usernameEdit->setText(settings.value("mc/username", "").toString());
-    ui->memoryEdit->setText(QString::asprintf("%dMB", settings.value("mc/memory", 2048).toInt()));
+    ui->memoryEdit->setText(settings.value("mc/memory", "2GB").toString());
     auto javaPath = settings.value("mc/javaPath", "").toString();
     if (!(QFile{javaPath}).exists()) {
         // find java
@@ -169,12 +194,11 @@ void MinecraftWrapper::loadSettings()
 void MinecraftWrapper::saveSettings()
 {
     settings.setValue("mc/username", ui->usernameEdit->text());
-    settings.setValue("mc/memory", ui->memoryEdit->text().toInt());
+    settings.setValue("mc/memory", ui->memoryEdit->text());
     settings.setValue("mc/javaPath", ui->javaEdit->text());
     settings.sync();
 }
 
 void MinecraftWrapper::closeEvent(QCloseEvent *event)
 {
-    saveSettings();
 }

@@ -3,6 +3,7 @@
 //#include <stdexcept>
 //#include <experimental/filesystem>
 #include <QException>
+#include <QDebug>
 
 
 //namespace fs = std::experimental::filesystem;
@@ -24,6 +25,7 @@ bool ModSwitch::enabled() const
 
 bool ModSwitch::toggle()
 {
+    qDebug() << (QFile {enabledPath_}).fileName();
     if (enabled()) {
         return (QFile {enabledPath_}).rename(disabledPath_);
     } else {

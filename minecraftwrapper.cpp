@@ -8,12 +8,13 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
-
+#include <QMessageBox>
 #include <QProcess>
 
 #include "mcconfig.hpp"
 #include "modswitch.hpp"
 #include "envjavalocator.hpp"
+#include "boxshadoweffect.h"
 
 static unsigned long long parseMemory(const QString &memory)
 {
@@ -51,6 +52,9 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
     ui->setupUi(this);
 
     // ui->usernameEdit->setProperty("hasText", true);
+
+    ui->mainWidget->setGraphicsEffect(new BoxShadowEffect());
+    ui->settingWidget->setGraphicsEffect(new BoxShadowEffect());
 
     ui->settingWidget->hide();
 
@@ -161,13 +165,18 @@ void MinecraftWrapper::startGame()
     }
     QProcess *process = new QProcess();
     process->start(ui->javaEdit->text(), arguments);
+    qDebug() << process->waitForStarted();
     process->waitForReadyRead();
     auto output = process->readAllStandardOutput();
     auto error = process->readAllStandardError();
+    qDebug() << output;
+    qDebug() << error;
     // TODO: display error message
     if (error.size() == 0 && !output.contains("Crash")) {
         saveSettings();
         close();
+    } else {
+        QMessageBox::information(NULL, "启动失败", QString::fromLocal8Bit(error), QMessageBox::Yes, QMessageBox::Yes);
     }
 }
 

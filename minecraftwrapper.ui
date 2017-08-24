@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
-    <height>520</height>
+    <width>470</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -260,6 +260,8 @@
      </layout>
     </widget>
    </widget>
+   <zorder>settingWidget</zorder>
+   <zorder>mainWidget</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

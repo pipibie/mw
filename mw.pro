@@ -27,13 +27,15 @@ SOURCES += main.cpp\
         minecraftwrapper.cpp \
     modswitch.cpp \
     javalocator.cpp \
-    envjavalocator.cpp
+    envjavalocator.cpp \
+    boxshadoweffect.cpp
 
 HEADERS  += minecraftwrapper.hpp \
     mcconfig.hpp \
     modswitch.hpp \
     javalocator.hpp \
-    envjavalocator.hpp
+    envjavalocator.hpp \
+    boxshadoweffect.h
 
 FORMS    += minecraftwrapper.ui
 

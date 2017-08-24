@@ -4,10 +4,12 @@ QWidget {
 
 QWidget#mainWidget {
     background-color: white;
+    border-radius: 8px;
 }
 
 QWidget#settingWidget {
     background-color: #edf1f4;
+    border-radius: 8px;
 }
 
 QPushButton {

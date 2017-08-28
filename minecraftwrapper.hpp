@@ -31,6 +31,7 @@ public slots:
 private:
     void loadSettings();
     void saveSettings();
+    void showErrorMessage(const QString & text);
 private:
     Ui::MinecraftWrapper *ui;
     QPoint dragPosition;

@@ -151,8 +151,28 @@ void MinecraftWrapper::toggleSettingPanel()
 
 void MinecraftWrapper::startGame()
 {
+    // check memory
     unsigned long long memory = parseMemory(ui->memoryEdit->text());
-    qDebug() << memory;
+    if (memory < 2048) {
+        showErrorMessage("内存不足(至少为2G)");
+        return;
+    }
+
+    switch (JavaLocator::check_java(ui->javaEdit->text())) {
+    case JavaLocator::INVALID:
+        showErrorMessage("<a href=\"http://pan.diemoe.net/d/RVCc53\">JAVA无效，建议卸载原JAVA，并点此下载安装64位JAVA安装</a>");
+        return;
+    case JavaLocator::WORD_SIZE:
+        showErrorMessage("<a href=\"http://pan.diemoe.net/d/RVCc53\">请卸载32位的JAVA，并点此下载安装64位JAVA安装</a>");
+        return;
+    }
+
+    QRegExp regex("[a-zA-Z0-9]+");
+    if (!regex.exactMatch(ui->usernameEdit->text())) {
+        showErrorMessage("用户名只允许英文和数字");
+        return;
+    }
+
     QFile commandFile(":/config/command.txt");
     commandFile.open(QFile::ReadOnly);
     QString command = QString::fromUtf8(commandFile.readAll()).replace("\n", "").replace("\r", "");
@@ -176,7 +196,7 @@ void MinecraftWrapper::startGame()
         saveSettings();
         close();
     } else {
-        QMessageBox::information(NULL, "启动失败", QString::fromLocal8Bit(error), QMessageBox::Yes, QMessageBox::Yes);
+        showErrorMessage(QString::fromLocal8Bit(error));
     }
 }
 
@@ -206,6 +226,11 @@ void MinecraftWrapper::saveSettings()
     settings.setValue("mc/memory", ui->memoryEdit->text());
     settings.setValue("mc/javaPath", ui->javaEdit->text());
     settings.sync();
+}
+
+void MinecraftWrapper::showErrorMessage(const QString &text)
+{
+    QMessageBox::information(NULL, "启动失败", text, QMessageBox::Yes, QMessageBox::Yes);
 }
 
 void MinecraftWrapper::closeEvent(QCloseEvent *event)

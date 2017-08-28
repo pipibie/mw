@@ -42,5 +42,4 @@ FORMS    += minecraftwrapper.ui
 RESOURCES += \
     minecraftwrapper.qrc
 
-DISTFILES += \
-    config/command.txt
+DISTFILES +=

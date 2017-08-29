@@ -86,7 +86,6 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
                     checkbox->setChecked(switcher->enabled());
 
                     connect(checkbox, &QCheckBox::clicked, [switcher](bool value) {
-                        qDebug() << switcher->enabled();
                         if (switcher->enabled() != value) {
                             switcher->toggle();
                         }
@@ -169,7 +168,7 @@ void MinecraftWrapper::startGame()
 
     QRegExp regex("[a-zA-Z0-9]+");
     if (!regex.exactMatch(ui->usernameEdit->text())) {
-        showErrorMessage("用户名只允许英文和数字");
+        showErrorMessage("msg"); // 用户名只允许英文和数字
         return;
     }
 

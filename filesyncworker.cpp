@@ -9,17 +9,57 @@
 #include <QDebug>
 #include <QStack>
 
+#include <QUrl>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+
+#include <future>
+
 FileSyncWorker::FileSyncWorker(QObject *parent)
     : buffer_(new char[BUFFER_SIZE])
 {
+    connect(&manager_, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
 }
 
-void FileSyncWorker::doWork(const QString &parameter)
+void FileSyncWorker::doWork(const QString &uri, const QString &etag)
 {
-QString result;
-/* ... here is the expensive or blocking operation ... */
-//emit resultReady(result);
+    QNetworkRequest request;
+    manifest_uri_ = QUrl(uri);
+    request.setUrl(manifest_uri_);
+    if (etag.length() > 0) {
+        request.setRawHeader("If-None-Match", etag.toStdString().c_str());
+    }
+    manager_.get(request);
 }
+
+void FileSyncWorker::downloadFinished(QNetworkReply *reply)
+{
+    QUrl url = reply->url();
+    if (url == manifest_uri_) {
+        if (reply->error()) {
+            fprintf(stderr, "Download of %s failed: %s\n",
+                    url.toEncoded().constData(),
+                    qPrintable(reply->errorString()));
+        } else {
+            auto statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
+            if (statusCode != 304) {
+                auto etag = reply->rawHeader(QByteArray{"ETag"});
+                qDebug() << statusCode;
+                qDebug() << reply->readAll();
+            }
+        }
+    }
+
+    reply->deleteLater();
+}
+
+//void FileSyncWorker::doWork(const QString &parameter)
+//{
+//QString result;
+///* ... here is the expensive or blocking operation ... */
+////emit resultReady(result);
+//}
 
 QJsonObject FileSyncWorker::generateFileInfo(const QString & filename, const QDir & basedir)
 {

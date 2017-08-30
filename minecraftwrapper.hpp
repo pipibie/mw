@@ -8,6 +8,7 @@
 #include <QSettings>
 
 #include "modswitch.hpp"
+#include "filesyncworker.hpp"
 
 namespace Ui {
 class MinecraftWrapper;
@@ -28,6 +29,9 @@ public slots:
     void toggleXaerosMap(bool checked);
     void toggleSettingPanel();
     void startGame();
+    void onUpgradeReady(float percentage);
+    void onManifestReady(bool is_updated);
+    void onDownloadError(QString error);
 private:
     void loadSettings();
     void saveSettings();
@@ -39,6 +43,7 @@ private:
 protected:
     ModSwitch journey_map_switch;
     ModSwitch xaeros_map_switch;
+    FileSyncWorker worker;
 
     // QWidget interface
 protected:

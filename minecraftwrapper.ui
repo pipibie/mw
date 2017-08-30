@@ -118,11 +118,48 @@
       <string>inputUsername</string>
      </property>
     </widget>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="geometry">
+      <rect>
+       <x>35</x>
+       <y>230</y>
+       <width>180</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: none</string>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="updatingLabel">
+     <property name="geometry">
+      <rect>
+       <x>35</x>
+       <y>230</y>
+       <width>180</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>updating</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
     <zorder>settingButton</zorder>
     <zorder>logo</zorder>
     <zorder>closeButton</zorder>
     <zorder>gameStartButton</zorder>
     <zorder>usernameEdit</zorder>
+    <zorder>progressBar</zorder>
+    <zorder>updatingLabel</zorder>
    </widget>
    <widget class="QWidget" name="settingWidget" native="true">
     <property name="geometry">

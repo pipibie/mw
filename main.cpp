@@ -9,8 +9,6 @@
 
 int main(int argc, char *argv[])
 {
-    FileSyncWorker worker;
-    worker.doWork("http://localhost/manifest.json", "\"43e0-557e6c8fae259\"");
     if (argc == 2 && strcmp(argv[1], "--generate-manifest") == 0) {
         FileSyncWorker worker;
         auto doc = worker.generateManifest(".");

@@ -108,6 +108,13 @@ MinecraftWrapper::MinecraftWrapper(QWidget *parent) :
     }
 
     loadSettings();
+
+    connect(&worker, SIGNAL(manifestReady(bool)), this, SLOT(onManifestReady(bool)));
+    connect(&worker, SIGNAL(downloadError(QString)), this, SLOT(onDownloadError(QString)));
+    connect(&worker, SIGNAL(upgradeReady(float)), this, SLOT(onUpgradeReady(float)));
+    ui->gameStartButton->setEnabled(false);
+
+    worker.doWork("https://www.moem.cc/mcUA/manifest.json", "");
 }
 
 MinecraftWrapper::~MinecraftWrapper()
@@ -197,6 +204,32 @@ void MinecraftWrapper::startGame()
     } else {
         showErrorMessage(QString::fromLocal8Bit(error));
     }
+}
+
+void MinecraftWrapper::onUpgradeReady(float percentage)
+{
+    ui->progressBar->setValue(percentage * 100);
+    if (percentage > 0.99999) {
+        ui->progressBar->setVisible(false);
+        ui->updatingLabel->setVisible(false);
+        ui->gameStartButton->setEnabled(true);
+    }
+}
+
+void MinecraftWrapper::onManifestReady(bool is_updated)
+{
+    if (!is_updated) {
+        ui->gameStartButton->setEnabled(false);
+        ui->progressBar->setValue(0);
+        ui->progressBar->show();
+    } else {
+        ui->gameStartButton->setEnabled(true);
+    }
+}
+
+void MinecraftWrapper::onDownloadError(QString error)
+{
+//    qDebug() << error;
 }
 
 void MinecraftWrapper::loadSettings()

@@ -12,7 +12,7 @@ QWidget#settingWidget {
     border-radius: 8px;
 }
 
-QPushButton {
+QPushButton, QProgressBar {
     color: white;
     border-radius: 5;
     background-color: #7bd07f;
@@ -22,7 +22,7 @@ QPushButton:pressed {
     background-color: #72c276;
 }
 
-QPushButton#gameStartButton {
+QPushButton#gameStartButton, QLabel#updatingLabel {
     font-size: 18px;
 }
 

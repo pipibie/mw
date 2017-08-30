@@ -8,13 +8,14 @@
 #include <QDir>
 #include <QDebug>
 #include <QStack>
+#include <QMap>
 
 #include <QUrl>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-#include <future>
+#include "mcconfig.hpp"
 
 FileSyncWorker::FileSyncWorker(QObject *parent)
     : buffer_(new char[BUFFER_SIZE])
@@ -38,28 +39,54 @@ void FileSyncWorker::downloadFinished(QNetworkReply *reply)
     QUrl url = reply->url();
     if (url == manifest_uri_) {
         if (reply->error()) {
-            fprintf(stderr, "Download of %s failed: %s\n",
-                    url.toEncoded().constData(),
-                    qPrintable(reply->errorString()));
+            emit downloadError(reply->errorString());
         } else {
             auto statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
             if (statusCode != 304) {
                 auto etag = reply->rawHeader(QByteArray{"ETag"});
-                qDebug() << statusCode;
-                qDebug() << reply->readAll();
+                QFile manifest(MCConfig::base_dir.absoluteFilePath("manifest.json"));
+                manifest.open(QFile::WriteOnly);
+                manifest.write(reply->readAll());
+                manifest.close();
+                emit manifestReady(false);
+                checkLocalFiles();
+            } else {
+                emit manifestReady(true);
+                checkLocalFiles();
             }
         }
-    }
+    } else if (task_id_ < task_list_.size()) {
+        auto url_string = url.toString();
+        auto task_name = task_list_[task_id_];
+        if (url_string.contains(task_name)) {
+            if (reply->error()) {
+                emit downloadError(reply->errorString());
+                goto cleanup;
+            }
+            QFileInfo finfo(MCConfig::base_dir.absoluteFilePath(task_name));
+            QDir dir = finfo.dir();
+            if (!dir.exists()) {
+                if (!dir.mkdir(dir.absolutePath())) {
+                    emit downloadError("Failed to create directory: " + dir.absolutePath());
+                    goto cleanup;
+                }
+            }
 
+            QFile f(finfo.absoluteFilePath());
+            if (!f.open(QFile::WriteOnly)) {
+                emit downloadError("Failed to write file: " + finfo.absoluteFilePath());
+                goto cleanup;
+            }
+            f.write(reply->readAll());
+            f.close();
+        }
+
+    cleanup:
+        task_id_++;
+        upgradeNextFile();
+    }
     reply->deleteLater();
 }
-
-//void FileSyncWorker::doWork(const QString &parameter)
-//{
-//QString result;
-///* ... here is the expensive or blocking operation ... */
-////emit resultReady(result);
-//}
 
 QJsonObject FileSyncWorker::generateFileInfo(const QString & filename, const QDir & basedir)
 {
@@ -117,4 +144,38 @@ QJsonDocument FileSyncWorker::generateManifest(const QString &basedir)
     }
     doc.setArray(arr);
     return doc;
+}
+
+void FileSyncWorker::checkLocalFiles()
+{
+    task_id_ = 0;
+    QFile manifest(MCConfig::base_dir.absoluteFilePath("manifest.json"));
+    manifest.open(QFile::ReadOnly);
+    auto remote = QJsonDocument::fromJson(manifest.readAll()).array();
+    manifest.close();
+    auto local = generateManifest(MCConfig::base_dir.absolutePath()).array();
+
+    QMap<QString, QJsonObject> localInfo;
+    for (auto obj : local) {
+        localInfo[obj.toObject()["name"].toString()] = obj.toObject();
+    }
+
+    for (auto remoteFile : remote) {
+        if (remoteFile.toObject()["checksum"] != localInfo[remoteFile.toObject()["name"].toString()]["checksum"]) {
+            task_list_.append(remoteFile.toObject()["name"].toString());
+        }
+    }
+
+    upgradeNextFile();
+}
+
+void FileSyncWorker::upgradeNextFile()
+{
+    emit upgradeReady(static_cast<double>(task_id_) / task_list_.size());
+    if (task_id_ < task_list_.size()) {
+        QNetworkRequest request;
+        auto uri = QUrl("https://www.moem.cc/mcUA/" + task_list_[task_id_]);
+        request.setUrl(uri);
+        manager_.get(request);
+    }
 }
